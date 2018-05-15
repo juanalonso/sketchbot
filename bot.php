@@ -6,27 +6,28 @@
 
   $wordIndex = 0;
 
-  if (file_exists("data/wordlist.index")) {
-    $fileIndex = file_get_contents("data/wordlist.index");
+  if (file_exists(__DIR__ ."/data/wordlist.index")) {
+    $fileIndex = file_get_contents(__DIR__ ."/data/wordlist.index");
     if (is_numeric($fileIndex)) {
       $wordIndex = intval($fileIndex);
     }
   }
 
-  $wordData = file("data/wordlist.txt", FILE_IGNORE_NEW_LINES);
+  $wordData = file(__DIR__ ."/data/wordlist.txt", FILE_IGNORE_NEW_LINES);
 
-  if ($wordIndex >= count($wordData)) {
+  if ($wordIndex >= count($wordData)-1) {
     $wordIndex = 0;
   }
 
-  $output = ":pencil2: La palabra del día es *";
-  $output.= $wordData[$wordIndex] . "*";
+  $output = ":pencil2: Las palabras de hoy son *'";
+  $output.= $wordData[$wordIndex] . ($wordData[$wordIndex+1][0]=='i'?"'* e *'":"'* y *'");
+  $output.= $wordData[$wordIndex+1] . "'*";
 
   $json = array('text' => $output);
   $json_string = json_encode($json);    
 
-  $wordIndex++;
-  file_put_contents("data/wordlist.index", $wordIndex);
+  $wordIndex+=2;
+  file_put_contents(__DIR__ ."/data/wordlist.index", $wordIndex);
 
   $c = curl_init();
   curl_setopt_array($c, array(
